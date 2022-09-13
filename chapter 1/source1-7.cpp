@@ -8,6 +8,10 @@
 #define BCOLS 5
 #define CROWS 3
 #define CCOLS 5
+#define DROWS 5
+#define DCOLS 4
+#define EROWS 3
+#define ECOLS 4
 
 using namespace std;
 
@@ -189,10 +193,14 @@ int main(void)
     Matrix *a = new Matrix(AROWS, ACOLS);
     Matrix *b = new Matrix(BROWS, BCOLS);
     Matrix *c = new Matrix(CROWS, CCOLS);
+    Matrix *d = new Matrix(DROWS, DCOLS);
+    Matrix *e = new Matrix(EROWS, ECOLS);
 
     a->show_data();
     b->show_data();
     c->show_data();
+    d->show_data();
+    e->show_data();
 
     cout << "[SORT]" << endl;
     a->sort_data();
@@ -202,9 +210,17 @@ int main(void)
     a->addMatrix(*b);
     a->show_data();
 
+    cout << "[ADD 2]" << endl;
+    b->addMatrix(*c);
+    b->show_data();
+
     cout << "[MULTIPLY]" << endl;
     a->MultiplyMatrix(*b, *c);
     c->show_data();
+
+    cout << "[MULTIPLY 2]" << endl;
+    c->MultiplyMatrix(*d, *e);
+    e->show_data();
 
     return 0;
 }
