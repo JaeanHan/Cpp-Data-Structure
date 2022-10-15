@@ -17,7 +17,9 @@ public:
     bool IsEmpty() const;
     virtual T &Pop();
     virtual void Push(const T &);
-    friend ostream &operator<<(ostream &, Bag<T> &);
+
+    template <class T2>
+    friend ostream &operator<<(ostream &, Bag<T2> &);
 
 private:
     T *array;
@@ -130,9 +132,9 @@ inline bool Bag<T>::IsFull()
         return false;
 }
 template <class T>
-ostream &operator<<(ostream &ostream, Bag<T> bag)
+ostream &operator<<(ostream &ostream, Bag<T> &bag)
 {
-    for (int i = 0; i < bag.top; i++)
+    for (int i = 0; i < bag.top + 1; i++)
     {
         ostream << " " << bag.array[i];
     }
@@ -156,6 +158,8 @@ int main()
     b.Push(6);
     b.Push(7);
 
+    // cout << b << endl;
+
     if (b.IsEmpty())
     {
         cout << "empty" << endl;
@@ -172,7 +176,7 @@ int main()
         cout << "b.Pop() = " << n << endl;
     }
 
-    system("pause");
+    // system("pause");
 
     return 0;
 }

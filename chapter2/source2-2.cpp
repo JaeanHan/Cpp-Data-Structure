@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <cstring>
+#include <typeinfo>
 // #include "time.h"
 
 using namespace std;
@@ -23,7 +24,10 @@ public:
     bool IsEmpty();
     bool IsFull();
     int Size();
-    // friend ostream &operator<<(ostream &, Set<T> &);
+    void show(); // Push 확인을 위해 직접 만든 함수
+
+    template <class T2>
+    friend ostream &operator<<(ostream &, const Set<T2> &);
 };
 
 template <class T>
@@ -55,18 +59,21 @@ bool Set<T>::IsFull()
 }
 
 template <class T>
-void setBagCapacity(T *origin, int currentCapacity, int newCapacity)
+void setBagCapacity(T *&origin, int currentCapacity, int newCapacity)
 {
     if (newCapacity < 0)
     {
         throw "new capacity must be greater than 0";
     }
 
-    int length = currentCapacity > newCapacity ? newCapacity : currentCapacity;
+    int length = currentCapacity > newCapacity ? currentCapacity : newCapacity;
+    // 사이즈 더 작게는 x
+    // cout << "length: " << length << endl;
 
     T *temp = new T[length];
 
     memcpy(temp, origin, sizeof(T) * length);
+    // origin부터 length만큼을 tmep로 복사
 
     delete[] origin;
 
@@ -81,16 +88,19 @@ T &Set<T>::Pop()
         throw "no element found";
     }
 
+    // cout << "top: " << top << endl;
+    // cout << endl;
+
     int popIndex = top / 2;
 
     T *popped = new T;
     *popped = array[popIndex];
 
-    memcpy(array[popIndex], array[popIndex + 1], sizeof(T) * (top - popIndex));
+    memcpy(array + popIndex, array + popIndex + 1, sizeof(T) * (top - popIndex));
 
     top--;
 
-    return popped;
+    return *popped;
 }
 
 template <class T>
@@ -104,29 +114,41 @@ void Set<T>::Push(const T item)
         }
     }
 
-    if (top > capacity)
+    if (top == capacity - 1)
     {
         setBagCapacity(array, capacity, 2 * capacity);
         capacity *= 2;
     }
 
     array[++top] = item;
+    // cout << top << endl;
+    // cout << "array[top]: " << array[top] << endl;
 }
 
-// template <class T>
-// ostream &operator<<(ostream &ostream, Set<T> set)
-// {
-//     for (int i = 0; i < set.top; i++)
-//     {
-//         ostream << " " << set.array[i];
-//     }
-//     return ostream;
-// }
+template <class T>
+void Set<T>::show()
+{
+    for (int i = 0; i < top + 1; i++)
+    {
+        cout << array[i] << " ";
+    }
+}
+
+template <class T>
+ostream &operator<<(ostream &ostream, const Set<T> &set)
+{
+    for (int i = 0; i < set.top + 1; i++)
+    {
+        ostream << " " << set.array[i];
+    }
+    return ostream;
+}
 
 int main()
 {
     Set<int> b(4);
     int n;
+    int cnt = 0;
 
     // Set<float> fo(10);에 대하여도 구현할 것
 
@@ -138,6 +160,8 @@ int main()
     b.Push(6);
     b.Push(7);
 
+    // cout << b << endl;
+
     if (b.IsEmpty())
     {
         cout << "empty" << endl;
@@ -146,12 +170,16 @@ int main()
     else
     {
         cout << "not empty" << endl;
+        // cout << "b.show() : ";
+        // b.show();
+        // cout << endl;
     }
 
     while (!b.IsEmpty())
     {
         n = b.Pop();
         cout << "b.Pop() = " << n << endl;
+        cnt++;
     }
 
     // system("pause");
