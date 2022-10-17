@@ -3,86 +3,95 @@
 
 using namespace std;
 
+template <class T>
 class Chain;
 
+template <class T>
 class ChainNode
 {
-    friend class Chain;
+    friend class Chain<T>;
 
 public:
     ChainNode();
-    ChainNode(int value);
+    ChainNode(T value);
 
 private:
-    int data;        // 값
+    T data;          // 값
     ChainNode *link; // 다음 노드
 };
 
-ChainNode::ChainNode()
+template <class T>
+ChainNode<T>::ChainNode()
 {
 }
-
-ChainNode::ChainNode(int value)
+template <class T>
+ChainNode<T>::ChainNode(T value)
 {
     data = value;
 }
 
+template <class T>
 class Chain // 노드 묶음
 {
 public:
     Chain();
-    int Delete();     // first가 가르키고 있는 노드를 삭제하고 data를 반환
-    bool Delete(int); // 전달된 element를 삭제하고 삭제했으면 true 못했으면 false
-    void Insert(int);
-    void InsertSorted(int); // insert후 바로 list sort
-    void tempIterator();    // 리스트 원소 출력
+    T Delete();     // first가 가르키고 있는 노드를 삭제하고 data를 반환
+    bool Delete(T); // 전달된 element를 삭제하고 삭제했으면 true 못했으면 false
+    void Insert(T);
+    void InsertSorted(T); // insert후 바로 list sort
+    void tempIterator();  // 리스트 원소 출력
+    int length();
     void sort();
 
 private:
-    ChainNode *first;
+    ChainNode<T> *first;
 };
 
-Chain::Chain()
+template <class T>
+Chain<T>::Chain()
 {
-    first = new ChainNode(); // 헤드노드 역할
+    first = new ChainNode<T>(); // 헤드노드 역할
     first->data = -1;
     first->link = nullptr;
 }
 
-void Chain::Insert(int value) // 앞쪽에 추가하는 방법
+template <class T>
+void Chain<T>::Insert(T value) // 앞쪽에 추가하는 방법
 {
-    ChainNode *newChainNode = new ChainNode(value); // setData 기능만 추가
-    newChainNode->link = first;                     // 새로운 노드의 link를 first로 설정
-    first = newChainNode;                           // 새로운 노드를 first로 설정
+    ChainNode<T> *newChainNode = new ChainNode<T>(value); // setData 기능만 추가
+    newChainNode->link = first;                           // 새로운 노드의 link를 first로 설정
+    first = newChainNode;                                 // 새로운 노드를 first로 설정
 }
 
-int Chain::Delete() // first가 가르키는 노드 삭제
+template <class T>
+T Chain<T>::Delete() // first가 가르키는 노드 삭제
 {
     if (first->data == -1)
     {
         cout << "no elements found" << endl;
-        return;
+        return first->data; // -1
     }
 
-    ChainNode *next = first->link;
+    ChainNode<T> *next = first->link;
     int retValue = first->data;
 
-    ChainNode *temp = first;
+    ChainNode<T> *temp = first;
     first = next;
     delete temp;
 
     return retValue;
 }
 
-bool Chain::Delete(int targetData)
+template <class T>
+bool Chain<T>::Delete(T targetData)
 {
-    ChainNode *current, *next;
+    ChainNode<T> *current, *next;
     if (first->data != -1)
     {
         current = first;
         if (current->data == targetData) // 첫번째 노드가 해당 값을 가질 경우
         {
-            ChainNode *temp; // 사실 그냥 Delete() 호출해도됨
+            ChainNode<T> *temp; // 사실 그냥 Delete() 호출해도됨
             temp = first;
             first = temp->link;
             delete temp;
@@ -91,12 +100,12 @@ bool Chain::Delete(int targetData)
 
         while (current->data != -1) // 헤드노드가 아니라면
         {
-            ChainNode *target = current->link;
+            ChainNode<T> *target = current->link;
             next = target->link;            // 다음노드 미리 설정
             if (target->data == targetData) // target이 맞다면
             {
-                ChainNode *temp; // temp 생성
-                temp = target;   // delete 할 노드 temp로 이전
+                ChainNode<T> *temp; // temp 생성
+                temp = target;      // delete 할 노드 temp로 이전
 
                 current->link = next;
                 // currnet의 다음 노드를 다음다음 노드로 설정
@@ -109,16 +118,40 @@ bool Chain::Delete(int targetData)
     return false; // 삭제 못했다
 }
 
-void Chain::sort()
+template <class T>
+int Chain<T>::length()
 {
-    ChainNode *current = first;
-    ChainNode *next;
+    int length = 0;
+    ChainNode<T> *current = first;
+    while (current->data != -1)
+    {
+        current = current->link;
+        length++;
+    }
+    return length;
 }
 
-void Chain::InsertSorted(int input)
+// list 1 2 3 -1
+// length 3
+
+template <class T>
+void Chain<T>::sort()
 {
     ChainNode *current = first;
-    ChainNode *temp = new ChainNode(input);
+    T *tempStore = new T[length()];
+
+    for (int i = 0; i < length(); i++)
+    {
+        tempStore[i] = current->data;
+        current = current->link;
+    }
+}
+
+template <class T>
+void Chain<T>::InsertSorted(T input)
+{
+    ChainNode<T> *current = first;
+    ChainNode<T> *temp = new ChainNode<T>(input);
 
     if (current->data == -1) // 리스트 원소가 없다면
     {
@@ -131,9 +164,12 @@ void Chain::InsertSorted(int input)
     {
         if (input > current->data)
         {
-            ChainNode *headNode = current->link;
+            ChainNode<T> *headNode = current->link;
             current->link = temp; // temp 데이터가 크니까 뒤로 가야 한다
             temp->link = headNode;
+
+            // temp->link = first
+            // first = temp;
         }
         else
         {
@@ -163,7 +199,7 @@ void Chain::InsertSorted(int input)
         return;
     }
     // current는 first
-    ChainNode *next = current->link;
+    ChainNode<T> *next = current->link;
 
     while (next->data != -1)
     {
@@ -189,15 +225,15 @@ void Chain::InsertSorted(int input)
     }
 }
 
-void Chain::tempIterator()
+template <class T>
+void Chain<T>::tempIterator()
 {
-    ChainNode *current = first;
+    ChainNode<T> *current = first;
     cout << "remainings: ";
 
     while (current->data != -1) // 헤드노드가 아니라면
     {
         cout << current->data << " ";
-        // ChainNode *next = current->link;
         current = current->link;
     }
     cout << endl;
@@ -205,7 +241,7 @@ void Chain::tempIterator()
 
 int main()
 {
-    Chain chain;
+    Chain<int> chain;
     chain.Insert(0);
     chain.Insert(1);
     chain.Insert(2);
@@ -223,7 +259,7 @@ int main()
     cout << "insertSorted(2)" << endl;
     chain.tempIterator();
 
-    Chain chain2;
+    Chain<int> chain2;
     chain2.InsertSorted(2);
     chain2.InsertSorted(1);
     chain2.InsertSorted(3);
