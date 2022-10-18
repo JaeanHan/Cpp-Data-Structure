@@ -7,7 +7,7 @@ using namespace std;
 //소스 코드4.2: Circular Linked List - template 버젼으로 전환하기 OK
 // head node를 갖고 circular list로서   class List{ private: Node *last;}로 구현하기 OK
 //난수가 입력되면 정렬된 list를 만든다. OK
-//두개의 list를 merge하여 정렬된 list를 만든다.
+//두개의 list를 merge하여 정렬된 list를 만든다. OK
 // 출력은 iterator를 사용한다. OK
 // class Node, List, ListIterator OK
 
@@ -90,7 +90,7 @@ public:
     void Add(T); //그냥 메인에서 넣을라고
     bool Delete(T &);
     void show();
-    void sort(T *, int);                           // 아 그냥 상속받고싶다
+    void sort(T *, int);                           // 아 그냥 super해서 쓰고싶다
     CircularList<T> &mergeSort(CircularList<T> *); // 아 그냥 업캐스팅 하고싶다
 };
 
@@ -143,37 +143,37 @@ List<T>::List()
 }
 
 template <class T>
-List<T>::List(List<T> *copySource)
+List<T>::List(List<T> *copySource) // 복사 생성자
 {
     last = copySource->last;
 }
 
 template <class T>
-List<T>::List(CircularList<T> &source)
+List<T>::List(CircularList<T> &source) // 업캐스팅 대용
 {
     last = source->last;
     // list = source;
 }
 
 template <class T>
-List<T>::List(int mode)
+List<T>::List(int mode) // 그냥 아무것도 안하는 생성자 만들려고했는데 안됨
 {
     last = new Node<T>(0, 0);
 }
 
 template <class T>
-List<T>::~List()
+List<T>::~List() // 소멸자
 {
 }
 
 template <class T>
-Node<T> *List<T>::getLast()
+Node<T> *List<T>::getLast() // 자식 클래스에서 쓸려고 만듬
 {
     return last;
 }
 
 template <class T>
-void List<T>::setLast(Node<T> *toThis)
+void List<T>::setLast(Node<T> *toThis) // 자식 클래스에서 쓸려고 만듬
 {
     // Node<T> temp = toThis;
     // last = &toThis;
@@ -181,7 +181,7 @@ void List<T>::setLast(Node<T> *toThis)
 }
 
 template <class T>
-void List<T>::show()
+void List<T>::show() // iteraotor 사용해서 출력
 {
     List<T> copy(this);
     ListIterator<T> *iter = new ListIterator<T>(copy);
@@ -189,7 +189,7 @@ void List<T>::show()
 }
 
 template <class T>
-void List<T>::Add(T &item)
+void List<T>::Add(T &item) // 마지막에 추가
 {
     Node<T> *temp = new Node<T>(item, 0);
     if (last->data == 0) // last의 link가 first
@@ -207,7 +207,7 @@ void List<T>::Add(T &item)
 }
 
 template <class T>
-bool List<T>::Delete(T &targetData)
+bool List<T>::Delete(T &targetData) // 원하는 원소 삭제
 {
     Node<T> *current = last;
     Node<T> *follow = current->link; // 0
@@ -229,7 +229,7 @@ bool List<T>::Delete(T &targetData)
 }
 
 template <class T>
-void List<T>::sort(T *array, int arraySize)
+void List<T>::sort(T *array, int arraySize) // 정렬
 {
     T *initData = array;
     int initLength = arraySize;
@@ -249,7 +249,7 @@ void List<T>::sort(T *array, int arraySize)
 }
 
 template <class T>
-int List<T>::getSize()
+int List<T>::getSize() // 링크의 길이 반환
 {
     int size = 0;
     Node<T> *current = last->link->link; // first
@@ -264,7 +264,7 @@ int List<T>::getSize()
 }
 
 template <class T>
-T *List<T>::getDataSet()
+T *List<T>::getDataSet() // 현재 링크에서 값 추출해서 만든 배열 반환
 {
     int size = 0;
 
@@ -407,24 +407,24 @@ CircularList<T>::~CircularList()
 }
 
 template <class T>
-CircularList<T>::CircularList(List<T> &source)
+CircularList<T>::CircularList(List<T> &source) // 다운캐스팅 생성자
 {
     this->setLast(source.getLast());
 }
 
 template <class T>
-CircularList<T>::CircularList(List<T> *source)
+CircularList<T>::CircularList(List<T> *source) // 다운캐스팅 생성자
 {
     this->setLast(source->getLast());
 }
 
 template <class T>
-void CircularList<T>::show()
+void CircularList<T>::show() // iterator해서 만들려다가 못함
 {
-
     // List<T> source(this->last);
     // ListIterator<T> iter(source);
     // iter.printElements();
+
     Node<T> *current = this->getLast(); // last
     current = current->link->link;      // first
 
@@ -440,7 +440,7 @@ void CircularList<T>::show()
 }
 
 template <class T>
-void CircularList<T>::Add(T value)
+void CircularList<T>::Add(T value) // 마지막에 추가
 {
     Node<T> *temp = new Node<T>(value, 0);
     Node<T> *last = this->getLast();
@@ -459,7 +459,7 @@ void CircularList<T>::Add(T value)
 }
 
 template <class T>
-bool CircularList<T>::Delete(T &targetData)
+bool CircularList<T>::Delete(T &targetData) // 원하는 원소 삭제
 {
     Node<T> *last = this->getLast();
 
@@ -488,7 +488,7 @@ bool CircularList<T>::Delete(T &targetData)
 }
 
 template <class T>
-void CircularList<T>::sort(T *virtualParam, int tempStoreLength)
+void CircularList<T>::sort(T *virtualParam, int tempStoreLength) // 정렬이긴한데 overide하고싶으니 억지로 매개변수 맞춤
 {
     int size = 0;
     Node<T> *iter = this->getLast()->link->link;
@@ -522,14 +522,15 @@ void CircularList<T>::sort(T *virtualParam, int tempStoreLength)
 template <class T>
 CircularList<T> &CircularList<T>::mergeSort(CircularList<T> *operand)
 {
-    List<T> upcastSelf = List<T>(this);
-    List<T> upcastOperand = List<T>(operand);
+    List<T> upcastSelf = List<T>(this);       // 금단의 업캐스팅
+    List<T> upcastOperand = List<T>(operand); // 금단의 업캐스팅
 
     List<T> dest = upcastSelf.mergeSort(&upcastOperand);
     // dest.show();
 
     CircularList<T> *mergedList = new CircularList<T>(dest); //와 이게 기본생성자 호출이구나
     mergedList->show();
+
     return *mergedList;
 }
 
