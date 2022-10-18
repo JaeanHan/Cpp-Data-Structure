@@ -27,11 +27,10 @@ class CircularLinkedList
 public:
     CircularLinkedList();
     ~CircularLinkedList();
-    CircularLinkedList(int); // 길이 입력 받아서 난수 생성 모드
-    void getData();          // 난수 생성
-    void insert(T);          //그냥 insert
-    void insertSorted(T);    // insert 정렬
-    void deleteTarget(T &);
+    void getData();         // 난수 생성
+    void insert(T);         //그냥 insert
+    void insertSorted(T);   // insert 정렬
+    void deleteTarget(T &); // 타겟 삭제
     void show();
     CircularLinkedList<T> &mergeSort(CircularLinkedList<T> *);
 
@@ -54,17 +53,12 @@ Node<T>::Node(T &value) // data 생성자
 }
 
 template <class T>
+Node<T>::~Node() {}
+
+template <class T>
 CircularLinkedList<T>::CircularLinkedList() // 헤드노드x
 {
     last = 0;
-}
-
-template <class T>
-CircularLinkedList<T>::CircularLinkedList(int mode)
-{
-    if (mode == 1) // 랜덤 난수 생성
-    {
-    }
 }
 
 template <class T>
@@ -82,7 +76,7 @@ void CircularLinkedList<T>::getData()
     for (int i = 0; i < initSize; i++)
     {
         // this->insertSorted(rand() % 10);
-        this->insertSorted(rand() % 9 + 1);
+        this->insertSorted(rand() % initSize + 1);
     }
     cout << "[length: " << initSize << "] ";
     this->show();
@@ -195,8 +189,38 @@ void CircularLinkedList<T>::show()
         size++;
     }
     cout << last->data << endl;
-    cout << "[size checked by iterator: " << size + 1 << "]\n"
+    cout << "[size iterator says: " << size + 1 << "]\n"
          << endl;
+}
+
+template <class T>
+void CircularLinkedList<T>::deleteTarget(T &target)
+{
+    Node<T> *current = last->link; // first
+    Node<T> *follow = last;        // last
+    Node<T> *temp;
+
+    while (current != last)
+    {
+        if (current->data == target)
+        {
+            temp = current;
+            follow->link = current->link;
+            delete temp;
+            return;
+        }
+
+        follow = current;
+        current = current->link;
+    }
+
+    if (current->data == target)
+    {
+        temp = current;
+        follow->link = last->link;
+        last = follow;
+        delete temp;
+    }
 }
 
 template <class T>
@@ -208,16 +232,13 @@ CircularLinkedList<T> &CircularLinkedList<T>::mergeSort(CircularLinkedList<T> *o
 
     while (current1 != last && current2 != operand->last)
     {
-        // cout << "@@" << endl;
         if (current1->data < current2->data)
         {
-            // cout << "?? " << current1->data << endl;
             result->insert(current1->data);
             current1 = current1->link;
         }
         else if (current1->data > current2->data)
         {
-            // cout << "!! " << current2->data << endl;
             result->insert(current2->data);
             current2 = current2->link;
         }
@@ -264,6 +285,11 @@ int main()
     circularList2.getData();
 
     CircularLinkedList<int> mergedList = circularList.mergeSort(&circularList2);
+    mergedList.show();
+    cout << "give number to delete" << endl;
+    int target;
+    cin >> target;
+    mergedList.deleteTarget(target);
     mergedList.show();
 
     return 0;
