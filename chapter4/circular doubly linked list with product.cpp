@@ -14,7 +14,6 @@ public:
     int getProductPrice();
 
     friend bool operator==(Product &, Product &);
-    friend bool operator==(Product &, Product &);
     friend bool operator>(Product &, Product &);
     friend ostream &operator<<(ostream &, Product &);
 
@@ -240,6 +239,7 @@ void LinkedList<T>::Merge(LinkedList<T> &operand)
             curr1->llink = curr2;
 
             curr2 = temp;
+            size++;
         }
         else if (curr1 != first)
             curr1 = curr1->rlink;
@@ -253,6 +253,7 @@ void LinkedList<T>::Merge(LinkedList<T> &operand)
             curr1->llink = curr2;
 
             curr2 = temp;
+            size++;
         }
     }
 }
@@ -280,8 +281,8 @@ ostream &operator<<(ostream &os, LinkedList<T> &target)
     while (temp.isNextNotNull())
     {
         T *target = temp.Next();
-        // os << "[" + target->getProductName() << " : " << target->getProductPrice() << "] ";
-        os << target->getProductPrice() << " ";
+        // os << target->getProductPrice() << " ";
+        os << "[" + target->getProductName() << " : " << target->getProductPrice() << "] ";
     }
     os << endl;
     return os;
